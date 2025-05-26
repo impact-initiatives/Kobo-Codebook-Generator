@@ -6,7 +6,7 @@ about: Define the technical requirements for the project
 # Technical Specifications for the Codebook Generator
 
 ## Objective
-Develop a tool to convert KOBO or DAP forms into a basic codebook with the following minimum fields:
+Develop a tool to convert KOBO Form into a basic codebook with the following minimum fields:
 - Variable name
 - Variable label/description
 - Data type
@@ -14,10 +14,11 @@ Develop a tool to convert KOBO or DAP forms into a basic codebook with the follo
 - Allowed values (range; for percentages or integer variables)
 
 ## Requirements
-1. **Input**: KOBO or DAP forms.
+1. **Input**: KOBO forms.
 2. **Output**: A codebook containing the specified fields.
 3. **Data Transformations**:
    - Convert `select_one` in KOBO to categorical in the final codebook.
+   - Convert `select_multiple` in KOBO to multiple binary variables or a single variable with concatenated values in the final codebook.
 4. **Technology**:
    - Use Python for backend processing.
    - Use Streamlit for the web interface.

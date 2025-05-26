@@ -8,7 +8,7 @@ Kobo Codebook Generator is a Python-based tool with a Streamlit web interface de
 - Value labels
 - Allowed value ranges
 
-This tool aims to streamline dataset navigation and support teams with limited capacity.
+This tool aims to streamline dataset navigation.
 
 ## Features
 - Automated conversion of Kobo forms to codebooks.
