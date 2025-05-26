@@ -39,6 +39,17 @@ Run the Streamlit application:
 streamlit run app.py
 ```
 
+### API Token Template
+To upload your API token securely, use the following JSON format:
+
+```json
+{
+  "token": "your_api_token_here"
+}
+```
+
+Save this file as `token.json` and upload it when prompted in the application.
+
 ## Contributing
 Contributions are welcome! Please create a pull request on the `dev` branch for any changes.
 
