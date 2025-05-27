@@ -1,6 +1,7 @@
 import streamlit as st
 from modules.api_handler import fetch_kobo_form
 from modules.file_uploader import handle_file_upload
+from modules.variable_extractor import extract_variables_from_json, extract_variables_from_excel
 
 def main():
     """
@@ -21,11 +22,24 @@ def main():
 
         if st.button("Fetch Form"):
             if kobo_id and api_token:
-                form_data = fetch_kobo_form(kobo_id, api_token)
+                with st.spinner("Fetching form data..."):
+                    form_data = fetch_kobo_form(kobo_id, api_token)
                 st.success("Form fetched successfully!")
-                # Extract and display only the form structure
-                form_structure = form_data.get("content", {})
-                st.json(form_structure)
+
+                # Extract variables and display them
+                variables_df = extract_variables_from_json(form_data)
+                st.success("Variables extracted successfully!")
+                st.dataframe(variables_df)
+
+                # Provide download option
+                csv = variables_df.to_csv(index=False).encode('utf-8')
+                st.download_button(
+                    label="Download Variables as CSV",
+                    data=csv,
+                    file_name="variables.csv",
+                    mime="text/csv"
+                )
+
             else:
                 st.error("Please provide both Kobo Form ID and API Token.")
 
@@ -36,7 +50,20 @@ def main():
         if uploaded_file is not None:
             form_data = handle_file_upload(uploaded_file)
             st.success("File uploaded successfully!")
-            st.dataframe(form_data)
+
+            # Extract variables and display them
+            variables_df = extract_variables_from_excel(uploaded_file)
+            st.success("Variables extracted successfully!")
+            st.dataframe(variables_df)
+
+            # Provide download option
+            csv = variables_df.to_csv(index=False).encode('utf-8')
+            st.download_button(
+                label="Download Variables as CSV",
+                data=csv,
+                file_name="variables.csv",
+                mime="text/csv"
+            )
 
 if __name__ == "__main__":
     main()
