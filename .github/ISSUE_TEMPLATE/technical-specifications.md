@@ -14,7 +14,7 @@ Develop a tool to convert KOBO Form into a basic codebook with the following min
 - Allowed values (range; for percentages or integer variables)
 
 ## Requirements
-1. **Input**: KOBO forms.
+1. **Input**: KOBO forms via API or Excel file uploads.
 2. **Output**: A codebook containing the specified fields.
 3. **Data Transformations**:
    - Convert `select_one` in KOBO to categorical in the final codebook.
@@ -22,12 +22,13 @@ Develop a tool to convert KOBO Form into a basic codebook with the following min
 4. **Technology**:
    - Use Python for backend processing.
    - Use Streamlit for the web interface.
-5. **Timeline**:
-   - First version required by mid-July 2025.
+5. **Progress**:
+   - First operational version completed in May 2025.
 
 ## Additional Notes
-- The tool should be user-friendly to accommodate the lower capacity of some country teams.
-- Automate as much of the process as possible to reduce manual effort.
+- The tool is user-friendly to accommodate the lower capacity of some country teams.
+- Automates as much of the process as possible to reduce manual effort.
+- Provides CSV download functionality for extracted variables.
 
 ## Questions
 - Are there any additional fields or transformations required?

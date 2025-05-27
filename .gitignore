@@ -93,11 +93,6 @@ token_template.json
 # Credentials folder
 credentials/
 
-# Configuration file
-config.yaml
-
 # Test files
 test*
 
-# Configuration folder
-config/

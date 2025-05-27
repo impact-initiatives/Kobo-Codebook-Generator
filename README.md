@@ -14,10 +14,16 @@ This tool aims to streamline dataset navigation.
 - Automated conversion of Kobo forms to codebooks.
 - User-friendly web interface built with Streamlit.
 - Supports categorical and numerical data transformations.
+- Fetch Kobo forms via API or upload Excel files manually.
+- Download extracted variables as a CSV file.
 
 ## Requirements
 - Python 3.8+
 - Streamlit
+- pandas
+- requests
+- pyyaml
+- openpyxl  # Required for handling Excel files
 
 ## Installation
 1. Clone the repository:
