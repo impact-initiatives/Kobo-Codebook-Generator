@@ -2,9 +2,14 @@ import streamlit as st
 from modules.api_handler import fetch_kobo_form
 from modules.file_uploader import handle_file_upload
 from modules.variable_extractor import extract_variables_from_excel
+import os
 
 # Set the page layout to wide
 st.set_page_config(layout="wide")
+
+# Ensure the 'data' directory exists
+if not os.path.exists("data"):
+    os.makedirs("data")
 
 def main():
     """
