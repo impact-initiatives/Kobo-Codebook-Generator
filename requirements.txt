@@ -1,0 +1,5 @@
+streamlit
+pandas
+requests
+pyyaml
+openpyxl  # Required for handling Excel files with pandas
