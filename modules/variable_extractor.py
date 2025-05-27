@@ -45,6 +45,7 @@ def extract_variables_from_json(json_data: dict) -> pd.DataFrame:
 def extract_variables_from_excel(file_path: str) -> pd.DataFrame:
     """
     Extract variables from a Kobo form Excel file, including multilingual labels and category values.
+    Handles missing or empty 'choices' sheet gracefully.
 
     Args:
         file_path (str): The path to the Excel file.
@@ -52,43 +53,42 @@ def extract_variables_from_excel(file_path: str) -> pd.DataFrame:
     Returns:
         pd.DataFrame: A DataFrame containing variable names, English labels, data types, and category values with multilingual labels.
     """
-    # Load both 'survey' and 'choices' sheets from the Excel file
-    survey_df = pd.read_excel(file_path, sheet_name="survey")
-    choices_df = pd.read_excel(file_path, sheet_name="choices")
+    # Try to load both 'survey' and 'choices' sheets from the Excel file
+    try:
+        xls = pd.ExcelFile(file_path)
+        if 'survey' not in xls.sheet_names:
+            return pd.DataFrame()  # No survey sheet, return empty
+        survey_df = pd.read_excel(xls, sheet_name="survey")
+        if 'choices' in xls.sheet_names:
+            choices_df = pd.read_excel(xls, sheet_name="choices")
+        else:
+            choices_df = None
+    except Exception:
+        return pd.DataFrame()  # If file is not a valid Excel, return empty
 
     variables = []
-
-    # Identify all label columns (e.g., label::English, label::French)
     survey_label_columns = [col for col in survey_df.columns if col.startswith("label::")]
-    choices_label_columns = [col for col in choices_df.columns if col.startswith("label::")]
+    choices_label_columns = []
+    if choices_df is not None:
+        choices_label_columns = [col for col in choices_df.columns if col.startswith("label::")]
 
     for _, row in survey_df.iterrows():
-        # Extract the English label
         english_label = row.get("label::english", None)
-
-        # Extract category values and their multilingual labels for select_one and select_multiple types
         category_values = None
         category_labels = None
-        if row["type"].startswith("select_one") or row["type"].startswith("select_multiple"):
+        if (choices_df is not None and (row["type"].startswith("select_one") or row["type"].startswith("select_multiple"))):
             list_name = row["type"].split(" ")[1] if " " in row["type"] else None
             if list_name:
                 category_values = choices_df[choices_df["list_name"] == list_name]["name"].tolist()
-                category_labels = choices_df[choices_df["list_name"] == list_name][choices_label_columns].to_dict(orient="records")
-
-        # Map the data type to a human-readable category
-        mapped_type = map_data_type(row["type"])
-
+                category_labels = choices_df[choices_df["list_name"] == list_name][choices_label_columns].to_dict(orient="records") if choices_label_columns else None
         variables.append({
             "name": row["name"],
-            "label::english": english_label,  # Place English label next to name
-            "type": mapped_type,  # Use mapped type
-            "categories": category_values,  # Add category values
-            "category_labels": category_labels  # Add multilingual labels for categories
+            "label::english": english_label,
+            "type": map_data_type(row["type"]),
+            "categories": category_values,
+            "category_labels": category_labels
         })
-
-    # Convert the list of variables into a DataFrame
     variables_df = pd.DataFrame(variables)
-
     return variables_df
 
 def map_data_type(data_type: str) -> str:
@@ -106,6 +106,6 @@ def map_data_type(data_type: str) -> str:
     elif data_type.startswith("select_multiple"):
         return "Multiple-choice Categorical variable"
     elif data_type in ["start", "end"]:
-        return "Date"
+        return "date"
     else:
         return data_type  # Keep the original type for all other cases
