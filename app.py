@@ -1,7 +1,7 @@
 import streamlit as st
 from modules.api_handler import fetch_kobo_form
 from modules.file_uploader import handle_file_upload
-from modules.variable_extractor import extract_variables_from_json, extract_variables_from_excel
+from modules.variable_extractor import extract_variables_from_excel
 
 # Set the page layout to wide
 st.set_page_config(layout="wide")
@@ -26,12 +26,14 @@ def main():
         if st.button("Fetch Form"):
             if kobo_id and api_token:
                 with st.spinner("Fetching form data..."):
-                    form_data = fetch_kobo_form(kobo_id, api_token)
+                    output_path = "data/fetched_form.xlsx"  # Define a path to save the Excel file
+                    fetch_kobo_form(kobo_id, api_token, output_path)
+
                 success_msg = st.success("Form fetched successfully!", icon="✅")
                 success_msg.empty()
 
-                # Extract variables and display them
-                variables_df = extract_variables_from_json(form_data)
+                # Extract variables from the downloaded Excel file
+                variables_df = extract_variables_from_excel(output_path)
                 success_msg2 = st.success("Variables extracted successfully!", icon="✅")
                 success_msg2.empty()
                 st.dataframe(variables_df, use_container_width=True)
